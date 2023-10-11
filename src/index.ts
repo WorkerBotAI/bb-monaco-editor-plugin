@@ -1,0 +1,2 @@
+// for tsconfig.json
+export {}
