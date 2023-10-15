@@ -124,10 +124,47 @@
         "defaultValue": "handlebars"
       },
       {
-        "type": "text",
+        "type": "number",
         "label": "Height",
         "key": "height",
-        "defaultValue": "100"
+        "defaultValue": "300"
+      },
+      {
+        "type": "text",
+        "label": "Width",
+        "key": "width",
+        "defaultValue": "300px"
+      },
+      {
+        "type": "select",
+        "options": [2, 4, 6, 8],
+        "label": "Tab size",
+        "key": "tabSize",
+        "defaultValue": 2
+      },
+      {
+        "type": "boolean",
+        "label": "Minimap",
+        "key": "isShowMinimap",
+        "defaultValue": false
+      },
+      {
+        "type": "boolean",
+        "label": "Word-wrap",
+        "key": "isEnableWordWrap",
+        "defaultValue": true
+      },
+      {
+        "type": "boolean",
+        "label": "Readonly",
+        "key": "isReadOnly",
+        "defaultValue": false
+      },
+      {
+        "type": "text",
+        "label": "Readonly message",
+        "key": "readOnlyMessage",
+        "defaultValue": "This editor is read-only!"
       }
     ]
   }

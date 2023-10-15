@@ -1,16 +1,37 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import MonacoEditor from "./MonacoEditor.svelte";
-  import { getThemeForMonaco, type Theme } from "./services/theme";
+  import { type Theme } from "./services/theme";
   import { onDestroy } from "svelte";
   import type { Language } from "./services/language";
+  import { type Settings } from "./services/settings";
 
   //* ------ PROPS ------ *//
   export let field: string;
   export let theme: Theme = "Dark";
-  export let height = 100;
+  export let height = 300;
+  export let width = 300;
   export let initialValue = "";
   export let language: Language = "handlebars";
+  export let tabSize: Settings["tabSize"];
+  export let isEnableWordWrap: Settings["isEnableWordWrap"] = false;
+  export let isShowMinimap: Settings["isShowMinimap"] = false;
+  export let isReadOnly: Settings["isReadOnly"] = false;
+  export let readOnlyMessage: Settings["readOnlyMessage"] = undefined;
+
+  // Invoke settings
+  $: settings = {
+    theme,
+    height: isNaN(height) ? 300 : height,
+    width,
+    initialValue,
+    language,
+    tabSize,
+    isEnableWordWrap,
+    isShowMinimap,
+    isReadOnly,
+    readOnlyMessage,
+  } as Settings;
 
   //* ------ CONTEXTS ------ *//
   const formStepContext = getContext<any>("form-step");
@@ -48,20 +69,10 @@
     fieldApi?.deregister();
     unsubscribe?.();
   });
-
-  // Switch theme
-  $: vsTheme = getThemeForMonaco(theme);
 </script>
 
 <div use:styleable={$component.styles}>
-  <MonacoEditor
-    {initialValue}
-    {language}
-    {height}
-    {vsTheme}
-    bind:realtimeData
-  />
+  <MonacoEditor {settings} bind:realtimeData />
 </div>
 
-<style>
-</style>
+<style></style>

@@ -2,57 +2,149 @@
   import { onMount } from "svelte";
   import type monacoType from "monaco-editor";
   import loader from "@monaco-editor/loader";
-  import type { VSCodeTheme } from "./services/theme";
-  import type { Language } from "./services/language";
+  import { getThemeForMonaco } from "./services/theme";
+  import { DefaultSettings, type Settings } from "./services/settings";
 
   //* ------ PROPS ------ *//
-  export let vsTheme: VSCodeTheme;
-  export let initialValue = "";
-  export let language: Language = "handlebars";
-  export let height = 100;
-  export let realtimeData = initialValue;
+  export let settings: Settings;
+  $: ({ width, height } = settings);
+  export let realtimeData = settings?.initialValue || "";
 
   //* ------ CODES ------ *//
   let editor: monacoType.editor.IStandaloneCodeEditor;
   let monaco: typeof monacoType;
-  let element: HTMLElement;
+  let monacoElement: HTMLElement;
+  let isFullscreen = false;
 
-  // do switch vscode's theme
-  $: vsTheme && editor && editor.updateOptions({ theme: vsTheme });
-
+  $: {
+    if (settings && editor) {
+      editor.updateOptions({
+        tabSize: settings.tabSize || DefaultSettings.tabSize,
+        wordWrap: settings.isEnableWordWrap ? "on" : "off",
+        minimap: {
+          enabled: settings.isShowMinimap,
+        },
+        readOnly: settings.isReadOnly,
+        readOnlyMessage: {
+          value: settings?.readOnlyMessage || DefaultSettings.readOnlyMessage,
+        },
+        theme: getThemeForMonaco(settings.theme),
+      });
+    }
+  }
   // Update content when the datasource is modified
-  $: editor?.setValue(initialValue || "");
+  $: settings && editor && editor?.setValue(settings.initialValue || "");
 
   onMount(() => {
     // Initialize Monaco Editor
     loader.init().then((monacoInstance) => {
       monaco = monacoInstance;
-      editor = monaco.editor.create(element, {
-        value: initialValue,
-        language,
-        theme: vsTheme,
+      editor = monaco.editor.create(monacoElement, {
+        value: settings.initialValue,
+        language: settings.language,
+        theme: getThemeForMonaco(settings.theme),
         automaticLayout: true,
+        wordWrap: settings.isEnableWordWrap ? "on" : "off",
+        tabSize: settings.tabSize || DefaultSettings.tabSize,
+        cursorBlinking: "smooth",
+        minimap: {
+          enabled: settings.isShowMinimap,
+        },
+        readOnly: settings.isReadOnly,
+        readOnlyMessage: {
+          value: settings?.readOnlyMessage || DefaultSettings.readOnlyMessage,
+        },
+        bracketPairColorization: { enabled: true },
+        scrollBeyondLastLine: false,
       });
+
+      // update the value when the editor is changed
+      editor.onDidChangeModelContent(onContentChanged);
     });
   });
 
   // Debounce before binding realtimeData to the parent component
   let timer: NodeJS.Timeout;
 
-  const debounce = (v: string) => {
+  function debounce(v: string) {
     clearTimeout(timer);
     timer = setTimeout(() => {
       realtimeData = v;
-    }, 650);
-  };
+    }, 350);
+  }
 
-  function onEditorChange() {
+  function onContentChanged() {
     // Access the code using `editor.getValue()`
     let code = editor.getValue() || "";
     debounce(code);
   }
+
+  function toggleFullscreen() {
+    isFullscreen = !isFullscreen;
+
+    if (isFullscreen) {
+      monacoElement.style.height = "99%";
+    } else {
+      monacoElement.style.height = settings.height.toString();
+      monacoElement.style.width = settings.width.toString();
+    }
+  }
 </script>
 
-<div bind:this={element} style:height on:input={onEditorChange} />
+<div class="monaco-editor" class:fullscreen={isFullscreen}>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button
+      class="item"
+      class:active={isFullscreen}
+      on:click={toggleFullscreen}
+      title="Fullscreen"
+    >
+      <i class="fa fa-arrows-alt" />
+    </button>
+  </div>
+  <!-- Editor -->
+  <div bind:this={monacoElement} style:height style:width />
+</div>
 
-<style></style>
+<style>
+  .monaco-editor {
+    background: #ffffff;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .fullscreen {
+    position: fixed;
+    bottom: 5%;
+    left: 0;
+    width: 100% !important;
+    height: 90% !important;
+    z-index: 1000;
+  }
+
+  .toolbar {
+    padding: 10px;
+    display: flex;
+  }
+
+  .toolbar .item {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+    color: #000000;
+  }
+
+  .toolbar .item.active,
+  .toolbar .item:hover {
+    background: #276ffe;
+    color: #ffffff;
+    transition: all 0.2s ease;
+  }
+</style>

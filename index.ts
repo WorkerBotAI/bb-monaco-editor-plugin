@@ -1,4 +1,4 @@
-export { default as MonacoEditor } from "./src/MonacoEditor.svelte";
+import MonacoEditorComponent from "./src/MonacoEditor.svelte";
 
 import Wrapper from "./lib/Wrapper.svelte";
 import schema from "./schema.json";
@@ -18,5 +18,6 @@ if (window) {
 }
 
 export const Component = Wrapper;
+export const MonacoEditor = MonacoEditorComponent;
 export const version = pkg.version;
 export { schema };
