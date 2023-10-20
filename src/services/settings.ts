@@ -9,8 +9,8 @@ export const DefaultSettings = {
 };
 
 export type Settings = {
-  height: number;
-  width: number;
+  height: string;
+  width: string;
   theme: Theme;
   initialValue: string;
   language: Language;

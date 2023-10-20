@@ -124,10 +124,10 @@
         "defaultValue": "handlebars"
       },
       {
-        "type": "number",
+        "type": "text",
         "label": "Height",
         "key": "height",
-        "defaultValue": "300"
+        "defaultValue": "300px"
       },
       {
         "type": "text",

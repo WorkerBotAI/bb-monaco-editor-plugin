@@ -9,8 +9,8 @@
   //* ------ PROPS ------ *//
   export let field: string;
   export let theme: Theme = "Dark";
-  export let height = 300;
-  export let width = 300;
+  export let height = "300px";
+  export let width = "300px";
   export let initialValue = "";
   export let language: Language = "handlebars";
   export let tabSize: Settings["tabSize"];
@@ -22,7 +22,7 @@
   // Invoke settings
   $: settings = {
     theme,
-    height: isNaN(height) ? 300 : height,
+    height,
     width,
     initialValue,
     language,
