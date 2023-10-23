@@ -122,7 +122,7 @@
     bottom: 5%;
     left: 0;
     width: 100% !important;
-    height: 90% !important;
+    height: 74% !important;
     z-index: 1000;
   }
 

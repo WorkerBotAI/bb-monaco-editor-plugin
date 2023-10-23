@@ -1,6 +1,6 @@
 {
   "name": "bb-monaco-editor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Integration Monaco editor (VSCode) into budibase platform",
   "license": "MIT",
   "svelte": "index.js",
